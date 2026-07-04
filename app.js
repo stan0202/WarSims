@@ -323,8 +323,8 @@ btnRandom.addEventListener('click', () => {
 });
 
 function checkReady() {
-    const maxChars = parseInt(inputNumChars.value);
-    if (team1.length >= maxChars && team2.length >= maxChars) {
+    // 只要雙方都有至少一名角色，就可以開始戰鬥（不需人數相等）
+    if (team1.length > 0 && team2.length > 0) {
         btnStart.disabled = false;
     } else {
         btnStart.disabled = true;
@@ -424,14 +424,17 @@ btnStart.addEventListener('click', async () => {
     while(team1.some(isAlive) && team2.some(isAlive)) {
         logMessage(`<div class="log-turn">--- 回合 ${turn} ---</div>`);
         const p1First = (turn % 2 !== 0);
-        const maxChars = parseInt(inputNumChars.value);
+        
+        // 使用目前雙方人數的最大值作為迴圈上限
+        const currentMaxChars = Math.max(team1.length, team2.length);
 
-        for (let i = 0; i < maxChars; i++) {
+        for (let i = 0; i < currentMaxChars; i++) {
             const firstTeam = p1First ? team1 : team2;
             const secondTeam = p1First ? team2 : team1;
 
             const performAttack = async (attacker, defenders) => {
-                if(!isAlive(attacker) || !defenders.some(isAlive)) return;
+                // 如果該陣營在該順位沒有角色，或者角色已死，就不作動
+                if(!attacker || !isAlive(attacker) || !defenders.some(isAlive)) return;
                 
                 const target = getTarget(attacker, defenders);
                 if(!target) return;

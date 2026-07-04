@@ -1,9 +1,6 @@
-const TEMPLATES = {
-    "Warrior": { name: "戰士", icon: "🛡️", hp: 120, atk: 20, element: "石頭", pref: "前排" },
-    "Assassin": { name: "刺客", icon: "⚔️", hp: 90, atk: 30, element: "剪刀", pref: "後排" },
-    "Archer": { name: "弓手", icon: "🏹", hp: 100, atk: 26, element: "布", pref: "前排" },
-    "Mage": { name: "法師", icon: "🔮", hp: 80, atk: 19, element: "無", pref: "人多的一排" }
-};
+// 角色設定已移至 assets/data/characters.js
+// 在選取 .char-card 元素前先動態生成角色卡片
+renderCharacterPool('character-pool-container');
 
 let team1 = []; 
 let team2 = [];
@@ -196,7 +193,7 @@ function placeNewCharacter(teamId, x, y, cls, cellElem) {
     //     return;
     // }
 
-    addCharacterToBoard(teamId, x, y, TEMPLATES[cls], cellElem);
+    addCharacterToBoard(teamId, x, y, CHARACTER_TEMPLATES[cls], cellElem);
     checkReady();
 }
 

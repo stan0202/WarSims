@@ -1,8 +1,6 @@
-const TEMPLATES = {
-    "Warrior": { name: "戰士", icon: "🛡️", hp: 120, atk: 20, element: "石頭", pref: "前排" },
-    "Assassin": { name: "刺客", icon: "⚔️", hp: 90, atk: 30, element: "剪刀", pref: "後排" },
-    "Archer": { name: "弓手", icon: "🏹", hp: 100, atk: 26, element: "布", pref: "前排" }
-};
+// 角色設定已移至 assets/data/characters.js
+// 在選取 .char-card 元素前先動態生成角色卡片
+renderCharacterPool('character-pool-container');
 
 let team1 = []; 
 let team2 = [];
@@ -19,6 +17,7 @@ const audio = {
     hit: document.getElementById('hit-audio'),
     crit: document.getElementById('crit-audio'),
     die: document.getElementById('die-audio'),
+    magic: document.getElementById('magic-audio'),
     playSFX: (sound) => {
         if (!sound || sfxMuted) return;
         const clone = sound.cloneNode();
@@ -194,7 +193,7 @@ function placeNewCharacter(teamId, x, y, cls, cellElem) {
     //     return;
     // }
 
-    addCharacterToBoard(teamId, x, y, TEMPLATES[cls], cellElem);
+    addCharacterToBoard(teamId, x, y, CHARACTER_TEMPLATES[cls], cellElem);
     checkReady();
 }
 
@@ -396,7 +395,7 @@ btnStart.addEventListener('click', async () => {
 
     const getTarget = (attacker, enemies) => {
         const aliveEnemies = enemies.filter(isAlive);
-        if(aliveEnemies.length === 0) return null;
+        if(aliveEnemies.length === 0) return [];
 
         // Group enemies by x
         const xGroups = {};
@@ -406,19 +405,25 @@ btnStart.addEventListener('click', async () => {
         }
         
         const xKeys = Object.keys(xGroups).map(Number);
-        let targetEnemies = [];
         
-        if (attacker.pref === "前排") {
-            const minX = Math.min(...xKeys);
-            targetEnemies = xGroups[minX];
+        if (attacker.pref === "人多的一排") {
+            const counts = xKeys.map(x => xGroups[x].length);
+            const maxCount = Math.max(...counts);
+            const maxRows = xKeys.filter(x => xGroups[x].length === maxCount);
+            const targetX = maxRows[Math.floor(Math.random() * maxRows.length)];
+            return xGroups[targetX];
         } else {
-            const maxX = Math.max(...xKeys);
-            targetEnemies = xGroups[maxX];
+            let targetRowEnemies = [];
+            if (attacker.pref === "前排") {
+                const minX = Math.min(...xKeys);
+                targetRowEnemies = xGroups[minX];
+            } else {
+                const maxX = Math.max(...xKeys);
+                targetRowEnemies = xGroups[maxX];
+            }
+            const randomIndex = Math.floor(Math.random() * targetRowEnemies.length);
+            return [targetRowEnemies[randomIndex]];
         }
-        
-        // 如果同一排有多人，隨機挑選一個
-        const randomIndex = Math.floor(Math.random() * targetEnemies.length);
-        return targetEnemies[randomIndex];
     };
 
     while(team1.some(isAlive) && team2.some(isAlive)) {
@@ -436,39 +441,68 @@ btnStart.addEventListener('click', async () => {
                 // 如果該陣營在該順位沒有角色，或者角色已死，就不作動
                 if(!attacker || !isAlive(attacker) || !defenders.some(isAlive)) return;
                 
-                const target = getTarget(attacker, defenders);
-                if(!target) return;
+                const targets = getTarget(attacker, defenders);
+                if(!targets || targets.length === 0) return;
 
-                const { dmg, crit } = calcDamage(attacker, target);
-                target.hp = Math.max(0, target.hp - dmg);
-
-                const hpPercent = (target.hp / target.maxHp) * 100;
-                target.hpBar.style.width = `${hpPercent}%`;
-                if(hpPercent < 30) target.hpBar.classList.add('low');
+                const isMagic = attacker.name === "法師";
 
                 attacker.dom.classList.add(attacker.team === 1 ? 'anim-attack-t1' : 'anim-attack-t2');
-                target.dom.classList.add('anim-hit');
                 
-                if (crit) audio.playSFX(audio.crit); else audio.playSFX(audio.hit);
+                let playCritSound = false;
+                let playHitSound = false;
+                let anyoneDied = false;
+                const dmgTexts = [];
 
-                const dmgText = document.createElement('div');
-                dmgText.className = `damage-text ${crit ? 'crit' : ''}`;
-                dmgText.innerText = `-${dmg}`;
-                target.dom.parentElement.appendChild(dmgText);
+                for (const target of targets) {
+                    if (!isAlive(target)) continue;
 
-                const critStr = crit ? '<span class="log-crit">，屬性克制！</span>' : '。';
-                logMessage(`[玩家 ${attacker.team}] ${attacker.icon}${attacker.name} 攻擊 [玩家 ${target.team}] ${target.icon}${target.name}${critStr} 造成 ${dmg} 傷害。`);
+                    const { dmg, crit } = calcDamage(attacker, target);
+                    target.hp = Math.max(0, target.hp - dmg);
 
-                await sleep(200); 
+                    const hpPercent = (target.hp / target.maxHp) * 100;
+                    target.hpBar.style.width = `${hpPercent}%`;
+                    if(hpPercent < 30) target.hpBar.classList.add('low');
+
+                    if (isMagic) {
+                        target.dom.classList.add('anim-magic-hit');
+                    } else {
+                        target.dom.classList.add('anim-hit');
+                    }
+                    
+                    if (crit) playCritSound = true; 
+                    else playHitSound = true;
+
+                    const dmgText = document.createElement('div');
+                    dmgText.className = `damage-text ${crit ? 'crit' : ''}`;
+                    dmgText.innerText = `-${dmg}`;
+                    target.dom.parentElement.appendChild(dmgText);
+                    dmgTexts.push({text: dmgText, target: target});
+
+                    const critStr = crit ? '<span class="log-crit">，屬性克制！</span>' : '。';
+                    logMessage(`[玩家 ${attacker.team}] ${attacker.icon}${attacker.name} 攻擊 [玩家 ${target.team}] ${target.icon}${target.name}${critStr} 造成 ${dmg} 傷害。`);
+
+                    if(!isAlive(target)) {
+                        target.dom.classList.add('anim-die');
+                        logMessage(`<span class="log-death">💀 ${target.icon}${target.name} 陣亡！</span>`);
+                        anyoneDied = true;
+                    }
+                }
+
+                if (isMagic) audio.playSFX(audio.magic);
+                else if (playCritSound) audio.playSFX(audio.crit);
+                else if (playHitSound) audio.playSFX(audio.hit);
+
+                if (anyoneDied) audio.playSFX(audio.die);
+
+                await sleep(isMagic ? 500 : 200); 
 
                 attacker.dom.classList.remove('anim-attack-t1', 'anim-attack-t2');
-                target.dom.classList.remove('anim-hit');
-                dmgText.remove();
+                for (const dt of dmgTexts) {
+                    dt.target.dom.classList.remove('anim-hit', 'anim-magic-hit');
+                    dt.text.remove();
+                }
 
-                if(!isAlive(target)) {
-                    audio.playSFX(audio.die);
-                    target.dom.classList.add('anim-die');
-                    logMessage(`<span class="log-death">💀 ${target.icon}${target.name} 陣亡！</span>`);
+                if (anyoneDied) {
                     await sleep(300); 
                 }
             };

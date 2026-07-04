@@ -66,31 +66,8 @@
 
         <section class="selection-panel" id="selection-panel">
             <h3>請將下方角色「拖曳」至棋盤空格，或是點擊後再點擊棋盤</h3>
-            <div class="character-pool">
-                <div class="char-card" data-class="Warrior" draggable="true">
-                    <div class="icon">🛡️</div>
-                    <div class="info">
-                        <strong>戰士</strong>
-                        <span>HP:120 | ATK:20</span>
-                        <span>優先: 前排</span>
-                    </div>
-                </div>
-                <div class="char-card" data-class="Assassin" draggable="true">
-                    <div class="icon">⚔️</div>
-                    <div class="info">
-                        <strong>刺客</strong>
-                        <span>HP:90 | ATK:30</span>
-                        <span>優先: 後排</span>
-                    </div>
-                </div>
-                <div class="char-card" data-class="Archer" draggable="true">
-                    <div class="icon">🏹</div>
-                    <div class="info">
-                        <strong>弓手</strong>
-                        <span>HP:100 | ATK:26</span>
-                        <span>優先: 前排</span>
-                    </div>
-                </div>
+            <div class="character-pool" id="character-pool-container">
+                <!-- 角色卡片會由 characters.js 動態生成 -->
             </div>
             <div id="selection-status">目前選擇：無</div>
         </section>
@@ -101,12 +78,14 @@
         </section>
     </div>
 
-    <!-- 實體音效標籤 (請將您自己的 MP3 檔案放入資料夾中，並命名如下) -->
-    <audio id="bgm-audio" loop src="./bgm.mp3"></audio>
-    <audio id="hit-audio" src="./hit.mp3"></audio>
-    <audio id="crit-audio" src="./crit.mp3"></audio>
-    <audio id="die-audio" src="./die.mp3"></audio>
+    <!-- 實體音效標籤 -->
+    <audio id="bgm-audio" loop src="assets/audio/bgm.mp3"></audio>
+    <audio id="hit-audio" src="assets/audio/hit.mp3"></audio>
+    <audio id="crit-audio" src="assets/audio/crit.mp3"></audio>
+    <audio id="die-audio" src="assets/audio/die.mp3"></audio>
+    <audio id="magic-audio" src="assets/audio/magic.mp3"></audio>
 
+    <script src="assets/data/characters.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

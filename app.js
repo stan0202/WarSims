@@ -141,21 +141,25 @@ function createCell(parent, teamId, x, y) {
 }
 
 // 設定卡片的拖曳事件
-charCards.forEach(card => {
-    card.addEventListener('dragstart', e => {
-        draggedCharClass = card.dataset.class;
-        draggedCharId = null;
+window.bindCharCards = function() {
+    const charCards = document.querySelectorAll('.char-card');
+    charCards.forEach(card => {
+        card.addEventListener('dragstart', e => {
+            draggedCharClass = card.dataset.class;
+            draggedCharId = null;
+        });
+        card.addEventListener('dragend', () => draggedCharClass = null);
+        
+        // 點擊選擇 (舊有操作)
+        card.addEventListener('click', () => {
+            charCards.forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedClassForPlacement = card.dataset.class;
+            selectionStatus.innerText = t("selection_status") + t(CHARACTER_TEMPLATES[selectedClassForPlacement].nameKey) + t("select_instruction");
+        });
     });
-    card.addEventListener('dragend', () => draggedCharClass = null);
-    
-    // 點擊選擇 (舊有操作)
-    card.addEventListener('click', () => {
-        charCards.forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        selectedClassForPlacement = card.dataset.class;
-        selectionStatus.innerText = `目前選擇：${TEMPLATES[selectedClassForPlacement].name} (點擊棋盤放置)`;
-    });
-});
+};
+window.bindCharCards();
 
 // 將角色拖放出盤面外即可刪除
 document.body.addEventListener('dragover', e => {
@@ -189,7 +193,7 @@ function placeNewCharacter(teamId, x, y, cls, cellElem) {
     
     // 測試用：取消滿員限制，允許繼續增員
     // if (targetTeam.length >= maxChars) {
-    //     logMessage(`玩家 ${teamId} 已經達到人數上限 (${maxChars}人)！`);
+    //     logMessage(t("log_limit_reached", teamId, maxChars));
     //     return;
     // }
 
@@ -250,7 +254,7 @@ function addCharacterToBoard(teamId, x, y, tpl, cellElem) {
         team: teamId,
         x: parseInt(x),
         y: parseInt(y),
-        name: tpl.name,
+        nameKey: tpl.nameKey,
         icon: tpl.icon,
         hp: tpl.hp,
         maxHp: tpl.hp,
@@ -318,7 +322,7 @@ btnRandom.addEventListener('click', () => {
     generateForTeam(1, team1, gridTeam1);
     generateForTeam(2, team2, gridTeam2);
     checkReady();
-    logMessage("🎲 已為雙方隨機生成陣容！");
+    logMessage(t("log_random_done"));
 });
 
 function checkReady() {
@@ -367,7 +371,7 @@ btnStart.addEventListener('click', async () => {
     document.getElementById('selection-panel').classList.add('hidden');
     
     audio.playBGM();
-    logMessage("⚔️ <b>戰鬥開始！</b>");
+    logMessage(t("log_battle_start"));
     
     // 將所有角色設為不可拖曳
     document.querySelectorAll('.character').forEach(el => el.draggable = false);
@@ -375,8 +379,8 @@ btnStart.addEventListener('click', async () => {
     // 紀錄簡化的初始陣容
     const record = {
         timestamp: new Date().toISOString(),
-        team1Formation: team1.map(c => ({ name: c.name, x: c.x, y: c.y })),
-        team2Formation: team2.map(c => ({ name: c.name, x: c.x, y: c.y }))
+        team1Formation: team1.map(c => ({ nameKey: c.nameKey, x: c.x, y: c.y })),
+        team2Formation: team2.map(c => ({ nameKey: c.nameKey, x: c.x, y: c.y }))
     };
 
     let turn = 1;
@@ -427,7 +431,7 @@ btnStart.addEventListener('click', async () => {
     };
 
     while(team1.some(isAlive) && team2.some(isAlive)) {
-        logMessage(`<div class="log-turn">--- 回合 ${turn} ---</div>`);
+        logMessage(`<div class="log-turn">${t("log_turn", turn)}</div>`);
         const p1First = (turn % 2 !== 0);
         
         // 使用目前雙方人數的最大值作為迴圈上限
@@ -444,7 +448,7 @@ btnStart.addEventListener('click', async () => {
                 const targets = getTarget(attacker, defenders);
                 if(!targets || targets.length === 0) return;
 
-                const isMagic = attacker.name === "法師";
+                const isMagic = attacker.nameKey === "class_mage";
 
                 attacker.dom.classList.add(attacker.team === 1 ? 'anim-attack-t1' : 'anim-attack-t2');
                 
@@ -478,12 +482,12 @@ btnStart.addEventListener('click', async () => {
                     target.dom.parentElement.appendChild(dmgText);
                     dmgTexts.push({text: dmgText, target: target});
 
-                    const critStr = crit ? '<span class="log-crit">，屬性克制！</span>' : '。';
-                    logMessage(`[玩家 ${attacker.team}] ${attacker.icon}${attacker.name} 攻擊 [玩家 ${target.team}] ${target.icon}${target.name}${critStr} 造成 ${dmg} 傷害。`);
+                    const critStr = crit ? '<span class="log-crit">' + t("log_crit") + '</span>' : t("log_no_crit");
+                    logMessage(t("log_attack", attacker.team, attacker.icon, t(attacker.nameKey), target.team, target.icon, t(target.nameKey), critStr, dmg));
 
                     if(!isAlive(target)) {
                         target.dom.classList.add('anim-die');
-                        logMessage(`<span class="log-death">💀 ${target.icon}${target.name} 陣亡！</span>`);
+                        logMessage(`<span class="log-death">${t("log_death", target.icon, t(target.nameKey))}</span>`);
                         anyoneDied = true;
                     }
                 }
@@ -513,11 +517,11 @@ btnStart.addEventListener('click', async () => {
         turn++;
     }
 
-    let winner = "平手";
-    if (team1.some(isAlive)) winner = "玩家 1";
-    else if (team2.some(isAlive)) winner = "玩家 2";
+    let winner = t("log_draw");
+    if (team1.some(isAlive)) winner = t("log_win", "1");
+    else if (team2.some(isAlive)) winner = t("log_win", "2");
 
-    logMessage(`<br>🏆 <b>戰鬥結束！獲勝者是：${winner}！</b>`);
+    logMessage(`<br>${winner}`);
     record.result = winner;
     
     // 寫入簡化版的紀錄並存入 LocalStorage
@@ -531,7 +535,7 @@ btnStart.addEventListener('click', async () => {
 // 匯出簡易紀錄
 btnExport.addEventListener('click', () => {
     if (historyRecords.length === 0) {
-        alert("目前還沒有任何戰鬥紀錄可以匯出！");
+        alert(t("alert_no_record"));
         return;
     }
     
@@ -544,7 +548,7 @@ btnExport.addEventListener('click', () => {
     downloadAnchorNode.remove();
     
     // 匯出後可選擇清空
-    if(confirm("匯出成功！是否要清空目前存在瀏覽器的對戰紀錄？")) {
+    if(confirm(t("confirm_clear_record"))) {
         historyRecords = [];
         localStorage.removeItem('jrpg_history');
     }

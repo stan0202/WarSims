@@ -536,3 +536,21 @@ button:disabled {
     opacity: 0.3;
     filter: grayscale(1);
 }
+
+.top-controls {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
+}
+
+.top-controls select {
+    background: rgba(0,0,0,0.6);
+    color: var(--primary-gold);
+    border: 1px solid var(--glass-border);
+    padding: 0.5rem;
+    border-radius: 5px;
+    font-family: 'Noto Serif TC', serif;
+    outline: none;
+    cursor: pointer;
+}

@@ -185,10 +185,35 @@ function moveCharacter(charId, targetTeamId, newX, newY, targetCell) {
     // 不能跨陣營移動
     if (originalTeam !== targetTeamId) return;
 
-    // 如果目標格子已有其他人，可以做交換 (為求簡單這裡實作：目標格不能有人)
-    if (targetCell.hasChildNodes()) return;
+    const oldCell = charObj.dom.parentElement;
 
-    // 更新資料與 DOM
+    // 如果目標格子已有其他人，執行交換
+    if (targetCell.hasChildNodes()) {
+        const targetCharDom = targetCell.firstChild;
+        const targetCharId = targetCharDom.id;
+        
+        // 如果是同一個角色 (在原地放開)，不作處理
+        if (targetCharId === charId) return;
+
+        let targetCharObj = (originalTeam === 1 ? team1 : team2).find(c => c.id === targetCharId);
+        
+        if (targetCharObj) {
+            // 交換座標資料
+            const oldX = charObj.x;
+            const oldY = charObj.y;
+            charObj.x = parseInt(newX);
+            charObj.y = parseInt(newY);
+            targetCharObj.x = oldX;
+            targetCharObj.y = oldY;
+            
+            // 交換 DOM
+            oldCell.appendChild(targetCharDom);
+            targetCell.appendChild(charObj.dom);
+        }
+        return;
+    }
+
+    // 更新資料與 DOM (目標為空格)
     charObj.x = parseInt(newX);
     charObj.y = parseInt(newY);
     targetCell.appendChild(charObj.dom);

@@ -20,6 +20,7 @@ const audio = {
     hit: document.getElementById('hit-audio'),
     crit: document.getElementById('crit-audio'),
     die: document.getElementById('die-audio'),
+    magic: document.getElementById('magic-audio'),
     playSFX: (sound) => {
         if (!sound || sfxMuted) return;
         const clone = sound.cloneNode();
@@ -446,6 +447,8 @@ btnStart.addEventListener('click', async () => {
                 const targets = getTarget(attacker, defenders);
                 if(!targets || targets.length === 0) return;
 
+                const isMagic = attacker.name === "法師";
+
                 attacker.dom.classList.add(attacker.team === 1 ? 'anim-attack-t1' : 'anim-attack-t2');
                 
                 let playCritSound = false;
@@ -463,7 +466,11 @@ btnStart.addEventListener('click', async () => {
                     target.hpBar.style.width = `${hpPercent}%`;
                     if(hpPercent < 30) target.hpBar.classList.add('low');
 
-                    target.dom.classList.add('anim-hit');
+                    if (isMagic) {
+                        target.dom.classList.add('anim-magic-hit');
+                    } else {
+                        target.dom.classList.add('anim-hit');
+                    }
                     
                     if (crit) playCritSound = true; 
                     else playHitSound = true;
@@ -484,15 +491,17 @@ btnStart.addEventListener('click', async () => {
                     }
                 }
 
-                if (playCritSound) audio.playSFX(audio.crit);
+                if (isMagic) audio.playSFX(audio.magic);
+                else if (playCritSound) audio.playSFX(audio.crit);
                 else if (playHitSound) audio.playSFX(audio.hit);
+
                 if (anyoneDied) audio.playSFX(audio.die);
 
-                await sleep(200); 
+                await sleep(isMagic ? 500 : 200); 
 
                 attacker.dom.classList.remove('anim-attack-t1', 'anim-attack-t2');
                 for (const dt of dmgTexts) {
-                    dt.target.dom.classList.remove('anim-hit');
+                    dt.target.dom.classList.remove('anim-hit', 'anim-magic-hit');
                     dt.text.remove();
                 }
 

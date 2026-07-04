@@ -307,7 +307,15 @@ button:disabled {
 .anim-attack-t1 { animation: attack-right 0.2s ease-in-out; z-index: 10; }
 .anim-attack-t2 { animation: attack-left 0.2s ease-in-out; z-index: 10; }
 .anim-hit { animation: hit-shake 0.2s ease-in-out; }
+.anim-magic-hit { animation: magic-burn 0.5s ease-out; }
 .anim-die { animation: die 0.5s forwards; }
+
+@keyframes magic-burn {
+    0% { filter: brightness(1) sepia(0) hue-rotate(0deg); transform: scale(1); }
+    30% { filter: brightness(1.5) sepia(1) hue-rotate(-50deg) drop-shadow(0 0 15px orange); transform: scale(1.1); }
+    70% { filter: brightness(1.5) sepia(1) hue-rotate(-50deg) drop-shadow(0 0 20px red); transform: scale(1.05); }
+    100% { filter: brightness(1) sepia(0) hue-rotate(0deg); transform: scale(1); }
+}
 
 .damage-text {
     position: absolute;

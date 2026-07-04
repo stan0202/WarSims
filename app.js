@@ -11,8 +11,8 @@ let historyRecords = JSON.parse(localStorage.getItem('jrpg_history')) || [];
 
 let bgmMuted = false;
 let sfxMuted = false;
-let bgmVolume = 0.5;
-let sfxVolume = 0.5;
+let bgmVolume = 0.25;
+let sfxVolume = 0.25;
 
 const audio = {
     bgm: document.getElementById('bgm-audio'),

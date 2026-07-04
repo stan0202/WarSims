@@ -158,14 +158,41 @@ charCards.forEach(card => {
     });
 });
 
+// 將角色拖放出盤面外即可刪除
+document.body.addEventListener('dragover', e => {
+    e.preventDefault(); // 必須 preventDefault 才能接收 drop
+});
+
+document.body.addEventListener('drop', e => {
+    // 如果是丟在九宮格內，交給 cell 的 drop 處理
+    if (e.target.closest('.cell')) return;
+
+    // 如果丟在九宮格外部，且是盤面上既有的角色，就刪除它
+    if (draggedCharId) {
+        let charIndex = team1.findIndex(c => c.id === draggedCharId);
+        if (charIndex !== -1) {
+            team1[charIndex].dom.remove();
+            team1.splice(charIndex, 1);
+        } else {
+            charIndex = team2.findIndex(c => c.id === draggedCharId);
+            if (charIndex !== -1) {
+                team2[charIndex].dom.remove();
+                team2.splice(charIndex, 1);
+            }
+        }
+        checkReady();
+    }
+});
+
 function placeNewCharacter(teamId, x, y, cls, cellElem) {
     const maxChars = parseInt(inputNumChars.value);
     const targetTeam = teamId === 1 ? team1 : team2;
     
-    if (targetTeam.length >= maxChars) {
-        logMessage(`玩家 ${teamId} 已經達到人數上限 (${maxChars}人)！`);
-        return;
-    }
+    // 測試用：取消滿員限制，允許繼續增員
+    // if (targetTeam.length >= maxChars) {
+    //     logMessage(`玩家 ${teamId} 已經達到人數上限 (${maxChars}人)！`);
+    //     return;
+    // }
 
     addCharacterToBoard(teamId, x, y, TEMPLATES[cls], cellElem);
     checkReady();
@@ -297,7 +324,7 @@ btnRandom.addEventListener('click', () => {
 
 function checkReady() {
     const maxChars = parseInt(inputNumChars.value);
-    if (team1.length === maxChars && team2.length === maxChars) {
+    if (team1.length >= maxChars && team2.length >= maxChars) {
         btnStart.disabled = false;
     } else {
         btnStart.disabled = true;

@@ -48,11 +48,22 @@ def print_grids(team1_chars, team2_chars):
         print(f"{r1}   VS   {r2}")
     print()
 
-def select_target(attacker, enemies):
+def select_targets(attacker, enemies):
     alive_enemies = [e for e in enemies if e.is_alive()]
     if not alive_enemies:
-        return None
+        return []
         
+    if attacker.target_pref == "人多的一排":
+        row_counts = {}
+        for e in alive_enemies:
+            row_counts[e.x] = row_counts.get(e.x, 0) + 1
+            
+        max_count = max(row_counts.values())
+        max_rows = [x for x, count in row_counts.items() if count == max_count]
+        
+        target_row = random.choice(max_rows)
+        return [e for e in alive_enemies if e.x == target_row]
+
     def get_sort_key(enemy):
         # 決定優先攻擊目標 (加入些許隨機性處理同一排有多個敵人的狀況)
         tiebreaker = random.random()
@@ -72,7 +83,7 @@ def select_target(attacker, enemies):
                 return (enemy.x, tiebreaker) # x 越小越優先 (後排)
                 
     alive_enemies.sort(key=get_sort_key)
-    return alive_enemies[0]
+    return [alive_enemies[0]]
 
 def get_team_selection(player_name, templates, mode, num_chars):
     selected_templates = []
@@ -142,30 +153,32 @@ def simulate_battle(t1_templates, t2_templates, num_chars, verbose=True):
             # 第一順位隊伍攻擊
             if i < len(first_team) and first_team[i].is_alive() and any(c.is_alive() for c in second_team):
                 attacker = first_team[i]
-                target = select_target(attacker, second_team)
-                if target:
-                    damage = attacker.calculate_damage(target)
-                    is_crit = damage > attacker.atk
-                    crit_msg = "，屬性克制！" if is_crit else "。"
-                    target.hp -= damage
-                    if verbose:
-                        print(f"* [玩家 {attacker.team}] {attacker.icon}{attacker.name} 攻擊 [玩家 {target.team}] {target.icon}{target.name}{crit_msg} 造成 {damage} 點傷害。 ({target.name} HP: {max(0, target.hp)})")
-                    if not target.is_alive() and verbose:
-                        print(f"  -> 💀 {target.icon}{target.name} 陣亡！")
+                targets = select_targets(attacker, second_team)
+                for target in targets:
+                    if target.is_alive(): # 防範範圍傷害造成後續目標提早陣亡
+                        damage = attacker.calculate_damage(target)
+                        is_crit = damage > attacker.atk
+                        crit_msg = "，屬性克制！" if is_crit else "。"
+                        target.hp -= damage
+                        if verbose:
+                            print(f"* [玩家 {attacker.team}] {attacker.icon}{attacker.name} 攻擊 [玩家 {target.team}] {target.icon}{target.name}{crit_msg} 造成 {damage} 點傷害。 ({target.name} HP: {max(0, target.hp)})")
+                        if not target.is_alive() and verbose:
+                            print(f"  -> 💀 {target.icon}{target.name} 陣亡！")
 
             # 第二順位隊伍攻擊
             if i < len(second_team) and second_team[i].is_alive() and any(c.is_alive() for c in first_team):
                 attacker = second_team[i]
-                target = select_target(attacker, first_team)
-                if target:
-                    damage = attacker.calculate_damage(target)
-                    is_crit = damage > attacker.atk
-                    crit_msg = "，屬性克制！" if is_crit else "。"
-                    target.hp -= damage
-                    if verbose:
-                        print(f"* [玩家 {attacker.team}] {attacker.icon}{attacker.name} 攻擊 [玩家 {target.team}] {target.icon}{target.name}{crit_msg} 造成 {damage} 點傷害。 ({target.name} HP: {max(0, target.hp)})")
-                    if not target.is_alive() and verbose:
-                        print(f"  -> 💀 {target.icon}{target.name} 陣亡！")
+                targets = select_targets(attacker, first_team)
+                for target in targets:
+                    if target.is_alive():
+                        damage = attacker.calculate_damage(target)
+                        is_crit = damage > attacker.atk
+                        crit_msg = "，屬性克制！" if is_crit else "。"
+                        target.hp -= damage
+                        if verbose:
+                            print(f"* [玩家 {attacker.team}] {attacker.icon}{attacker.name} 攻擊 [玩家 {target.team}] {target.icon}{target.name}{crit_msg} 造成 {damage} 點傷害。 ({target.name} HP: {max(0, target.hp)})")
+                        if not target.is_alive() and verbose:
+                            print(f"  -> 💀 {target.icon}{target.name} 陣亡！")
 
         if verbose:
             print(f"\n[回合 {turn} 結束 - 戰場現況]")
@@ -193,7 +206,8 @@ def main():
     templates = [
         {"name": "戰士", "icon": "🛡️", "hp": 120, "atk": 20, "element": "石頭", "target_pref": "前排"},
         {"name": "刺客", "icon": "⚔️", "hp": 90, "atk": 30, "element": "剪刀", "target_pref": "後排"},
-        {"name": "弓手", "icon": "🏹", "hp": 100, "atk": 26, "element": "布", "target_pref": "前排"}
+        {"name": "弓手", "icon": "🏹", "hp": 100, "atk": 26, "element": "布", "target_pref": "前排"},
+        {"name": "法師", "icon": "🔮", "hp": 80, "atk": 19, "element": "無", "target_pref": "人多的一排"}
     ]
 
     while True:
@@ -233,7 +247,8 @@ def main():
         stats = {
             "戰士": {"deployed": 0, "wins": 0, "survived": 0},
             "刺客": {"deployed": 0, "wins": 0, "survived": 0},
-            "弓手": {"deployed": 0, "wins": 0, "survived": 0}
+            "弓手": {"deployed": 0, "wins": 0, "survived": 0},
+            "法師": {"deployed": 0, "wins": 0, "survived": 0}
         }
         p1_wins = 0
         p2_wins = 0

@@ -344,17 +344,27 @@ btnStart.addEventListener('click', async () => {
         const aliveEnemies = enemies.filter(isAlive);
         if(aliveEnemies.length === 0) return null;
 
-        aliveEnemies.sort((a, b) => {
-            const tie = Math.random();
-            if (attacker.team === 1) {
-                if(attacker.pref === "前排") return a.x !== b.x ? a.x - b.x : tie - 0.5;
-                else return a.x !== b.x ? b.x - a.x : tie - 0.5;
-            } else {
-                if(attacker.pref === "前排") return a.x !== b.x ? b.x - a.x : tie - 0.5;
-                else return a.x !== b.x ? a.x - b.x : tie - 0.5;
-            }
-        });
-        return aliveEnemies[0];
+        // Group enemies by x
+        const xGroups = {};
+        for (const e of aliveEnemies) {
+            if (!xGroups[e.x]) xGroups[e.x] = [];
+            xGroups[e.x].push(e);
+        }
+        
+        const xKeys = Object.keys(xGroups).map(Number);
+        let targetEnemies = [];
+        
+        if (attacker.pref === "前排") {
+            const minX = Math.min(...xKeys);
+            targetEnemies = xGroups[minX];
+        } else {
+            const maxX = Math.max(...xKeys);
+            targetEnemies = xGroups[maxX];
+        }
+        
+        // 如果同一排有多人，隨機挑選一個
+        const randomIndex = Math.floor(Math.random() * targetEnemies.length);
+        return targetEnemies[randomIndex];
     };
 
     while(team1.some(isAlive) && team2.some(isAlive)) {

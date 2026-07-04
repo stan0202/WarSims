@@ -260,7 +260,7 @@ function addCharacterToBoard(teamId, x, y, tpl, cellElem) {
         maxHp: tpl.hp,
         atk: tpl.atk,
         element: tpl.element,
-        pref: tpl.pref,
+        prefKey: tpl.prefKey,
         id: `char-${teamId}-${Date.now()}-${Math.floor(Math.random()*1000)}`
     };
     
@@ -423,7 +423,7 @@ btnStart.addEventListener('click', async () => {
         
         const xKeys = Object.keys(xGroups).map(Number);
         
-        if (attacker.pref === "人多的一排") {
+        if (attacker.prefKey === "pref_crowd") {
             const counts = xKeys.map(x => xGroups[x].length);
             const maxCount = Math.max(...counts);
             const maxRows = xKeys.filter(x => xGroups[x].length === maxCount);
@@ -431,7 +431,7 @@ btnStart.addEventListener('click', async () => {
             return xGroups[targetX];
         } else {
             let targetRowEnemies = [];
-            if (attacker.pref === "前排") {
+            if (attacker.prefKey === "pref_front") {
                 const minX = Math.min(...xKeys);
                 targetRowEnemies = xGroups[minX];
             } else {

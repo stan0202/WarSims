@@ -299,7 +299,6 @@ function checkReady() {
     const maxChars = parseInt(inputNumChars.value);
     if (team1.length === maxChars && team2.length === maxChars) {
         btnStart.disabled = false;
-        document.getElementById('selection-panel').classList.add('hidden');
     } else {
         btnStart.disabled = true;
     }
@@ -337,6 +336,9 @@ btnStart.addEventListener('click', async () => {
     btnRandom.disabled = true;
     inputNumChars.disabled = true;
     logContent.innerHTML = '';
+    
+    // 戰鬥開始時隱藏下方自選面板
+    document.getElementById('selection-panel').classList.add('hidden');
     
     audio.playBGM();
     logMessage("⚔️ <b>戰鬥開始！</b>");

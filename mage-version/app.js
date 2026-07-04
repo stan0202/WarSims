@@ -304,7 +304,7 @@ function addCharacterToBoard(teamId, x, y, tpl, cellElem) {
 btnRandom.addEventListener('click', () => {
     resetBoard();
     const maxChars = parseInt(inputNumChars.value);
-    const classes = Object.keys(TEMPLATES);
+    const classes = Object.keys(CHARACTER_TEMPLATES);
     
     const generateForTeam = (teamId, targetArray, gridElem) => {
         const positions = [];
@@ -315,7 +315,7 @@ btnRandom.addEventListener('click', () => {
             const cls = classes[Math.floor(Math.random() * classes.length)];
             const pos = positions[i];
             const cell = gridElem.querySelector(`.cell[data-x="${pos.x}"][data-y="${pos.y}"]`);
-            addCharacterToBoard(teamId, pos.x, pos.y, TEMPLATES[cls], cell);
+            addCharacterToBoard(teamId, pos.x, pos.y, CHARACTER_TEMPLATES[cls], cell);
         }
     };
 

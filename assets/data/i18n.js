@@ -92,7 +92,11 @@ let currentLang = "zh-TW";
 function t(key, ...args) {
     let str = I18N[currentLang][key] || key;
     args.forEach((arg, i) => {
-        str = str.replace(`{${i}}`, arg);
+        let translatedArg = arg;
+        if (typeof arg === "string" && I18N[currentLang][arg]) {
+            translatedArg = I18N[currentLang][arg];
+        }
+        str = str.replace(`{${i}}`, translatedArg);
     });
     return str;
 }
@@ -108,6 +112,16 @@ function switchLanguage(lang) {
     document.querySelectorAll('[data-i18n-text]').forEach(el => {
         const key = el.getAttribute('data-i18n-text');
         el.childNodes[0].nodeValue = t(key);
+    });
+
+    document.querySelectorAll('[data-i18n-log]').forEach(el => {
+        const key = el.getAttribute('data-i18n-log');
+        const argsStr = el.getAttribute('data-i18n-args');
+        let args = [];
+        if (argsStr) {
+            try { args = JSON.parse(argsStr.replace(/&quot;/g, '"')); } catch(e){}
+        }
+        el.innerHTML = t(key, ...args);
     });
     
     if (typeof renderCharacterPool === "function") {

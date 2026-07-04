@@ -322,7 +322,7 @@ btnRandom.addEventListener('click', () => {
     generateForTeam(1, team1, gridTeam1);
     generateForTeam(2, team2, gridTeam2);
     checkReady();
-    logMessage(t("log_random_done"));
+    logI18n('{content}', "log_random_done");
 });
 
 function checkReady() {
@@ -359,6 +359,19 @@ function logMessage(htmlStr) {
     logContent.scrollTop = logContent.scrollHeight;
 }
 
+function escapeHtml(unsafe) {
+    if (typeof unsafe !== 'string') return unsafe;
+    return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+function logI18n(htmlTemplate, key, args = []) {
+    const argsStr = escapeHtml(JSON.stringify(args));
+    const translated = t(key, ...args);
+    const spanHtml = `<span data-i18n-log="${key}" data-i18n-args="${argsStr}">${translated}</span>`;
+    const finalHtml = htmlTemplate ? htmlTemplate.replace('{content}', spanHtml) : spanHtml;
+    logMessage(finalHtml);
+}
+
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 btnStart.addEventListener('click', async () => {
@@ -371,7 +384,7 @@ btnStart.addEventListener('click', async () => {
     document.getElementById('selection-panel').classList.add('hidden');
     
     audio.playBGM();
-    logMessage(t("log_battle_start"));
+    logI18n('{content}', "log_battle_start");
     
     // 將所有角色設為不可拖曳
     document.querySelectorAll('.character').forEach(el => el.draggable = false);
@@ -431,7 +444,7 @@ btnStart.addEventListener('click', async () => {
     };
 
     while(team1.some(isAlive) && team2.some(isAlive)) {
-        logMessage(`<div class="log-turn">${t("log_turn", turn)}</div>`);
+        logI18n('<div class="log-turn">{content}</div>', "log_turn", [turn]);
         const p1First = (turn % 2 !== 0);
         
         // 使用目前雙方人數的最大值作為迴圈上限
@@ -482,12 +495,12 @@ btnStart.addEventListener('click', async () => {
                     target.dom.parentElement.appendChild(dmgText);
                     dmgTexts.push({text: dmgText, target: target});
 
-                    const critStr = crit ? '<span class="log-crit">' + t("log_crit") + '</span>' : t("log_no_crit");
-                    logMessage(t("log_attack", attacker.team, attacker.icon, t(attacker.nameKey), target.team, target.icon, t(target.nameKey), critStr, dmg));
+                    const critArg = crit ? "log_crit" : "log_no_crit";
+                    logI18n('{content}', "log_attack", [attacker.team, attacker.icon, attacker.nameKey, target.team, target.icon, target.nameKey, critArg, dmg]);
 
                     if(!isAlive(target)) {
                         target.dom.classList.add('anim-die');
-                        logMessage(`<span class="log-death">${t("log_death", target.icon, t(target.nameKey))}</span>`);
+                        logI18n('<span class="log-death">{content}</span>', "log_death", [target.icon, target.nameKey]);
                         anyoneDied = true;
                     }
                 }
@@ -517,12 +530,13 @@ btnStart.addEventListener('click', async () => {
         turn++;
     }
 
-    let winner = t("log_draw");
-    if (team1.some(isAlive)) winner = t("log_win", "1");
-    else if (team2.some(isAlive)) winner = t("log_win", "2");
+    let winnerArg = "log_draw";
+    let winnerArgs = [];
+    if (team1.some(isAlive)) { winnerArg = "log_win"; winnerArgs = ["1"]; }
+    else if (team2.some(isAlive)) { winnerArg = "log_win"; winnerArgs = ["2"]; }
 
-    logMessage(`<br>${winner}`);
-    record.result = winner;
+    logI18n('<br>{content}', winnerArg, winnerArgs);
+    record.result = t(winnerArg, ...winnerArgs);
     
     // 寫入簡化版的紀錄並存入 LocalStorage
     historyRecords.push(record);

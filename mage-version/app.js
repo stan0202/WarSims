@@ -461,25 +461,35 @@ btnStart.addEventListener('click', async () => {
     }
 
     let simTime = 0.0;
+    let nextTiedTeamPriority = 1; // 輪流先手優先權，開局 Team 1 優先
 
     while(team1.some(isAlive) && team2.some(isAlive)) {
         // 尋找下一個要發動攻擊的存活角色
         const living = [...team1, ...team2].filter(isAlive);
         if(living.length === 0) break;
 
-        // 依據 nextAttackTime 排序；若時間相同，則 Team 1 優先，再以 ID 排序
+        // 依據 nextAttackTime 排序；若時間相同，則根據雙方輪流先手優先權決定，再以 ID 排序
         living.sort((a, b) => {
             if (Math.abs(a.nextAttackTime - b.nextAttackTime) > 0.0001) {
                 return a.nextAttackTime - b.nextAttackTime;
             }
             if (a.team !== b.team) {
-                return a.team - b.team;
+                return a.team === nextTiedTeamPriority ? -1 : 1;
             }
             return a.id.localeCompare(b.id);
         });
 
         const attacker = living[0];
         simTime = attacker.nextAttackTime;
+
+        // 檢查在相同的時間點是否有其他不同隊伍的角色也準備攻擊（即發生同時攻擊的情況）
+        const hasTie = living.slice(1).some(other => 
+            Math.abs(other.nextAttackTime - attacker.nextAttackTime) <= 0.0001 && other.team !== attacker.team
+        );
+        if (hasTie) {
+            // 切換下一輪同時攻擊時的優先權隊伍，實現雙方輪流取得先手
+            nextTiedTeamPriority = nextTiedTeamPriority === 1 ? 2 : 1;
+        }
 
         const defenders = attacker.team === 1 ? team2 : team1;
         if (!defenders.some(isAlive)) break;

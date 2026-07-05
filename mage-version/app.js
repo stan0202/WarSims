@@ -482,13 +482,14 @@ btnStart.addEventListener('click', async () => {
         const attacker = living[0];
         simTime = attacker.nextAttackTime;
 
-        // 檢查在相同的時間點是否有其他不同隊伍的角色也準備攻擊（即發生同時攻擊的情況）
+        // 檢查在相同的時間點是否有其他角色也準備攻擊（即發生同時攻擊的情況）
         const hasTie = living.slice(1).some(other => 
-            Math.abs(other.nextAttackTime - attacker.nextAttackTime) <= 0.0001 && other.team !== attacker.team
+            Math.abs(other.nextAttackTime - attacker.nextAttackTime) <= 0.0001
         );
         if (hasTie) {
-            // 切換下一輪同時攻擊時的優先權隊伍，實現雙方輪流取得先手
-            nextTiedTeamPriority = nextTiedTeamPriority === 1 ? 2 : 1;
+            // 只要同時間點還有角色未攻擊，就將下一順位的優先權交給對手陣營
+            // 如此一來，在人數不對等的同時攻擊結束後，下一輪的先手權自然會輪替給另一方
+            nextTiedTeamPriority = attacker.team === 1 ? 2 : 1;
         }
 
         const defenders = attacker.team === 1 ? team2 : team1;

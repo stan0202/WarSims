@@ -48,6 +48,14 @@ const btnExport = document.getElementById('btn-export');
 const inputNumChars = document.getElementById('num-chars');
 const charCards = document.querySelectorAll('.char-card');
 const selectionStatus = document.getElementById('selection-status');
+const speedSelect = document.getElementById('speed-select');
+
+let battleSpeed = 1.0;
+speedSelect.addEventListener('change', (e) => {
+    battleSpeed = parseFloat(e.target.value);
+    document.documentElement.style.setProperty('--battle-speed', battleSpeed);
+});
+speedSelect.dispatchEvent(new Event('change'));
 
 // 拖放狀態變數
 let draggedCharId = null; 
@@ -528,7 +536,7 @@ btnStart.addEventListener('click', async () => {
 
             if (anyoneDied) audio.playSFX(audio.die);
 
-            await sleep(isMagic ? 500 : 200); 
+            await sleep((isMagic ? 500 : 200) / battleSpeed); 
 
             attacker.dom.classList.remove('anim-attack-t1', 'anim-attack-t2');
             for (const dt of dmgTexts) {
@@ -537,7 +545,7 @@ btnStart.addEventListener('click', async () => {
             }
 
             if (anyoneDied) {
-                await sleep(300); 
+                await sleep(300 / battleSpeed); 
             }
         }
 

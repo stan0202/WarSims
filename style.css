@@ -304,11 +304,11 @@ button:disabled {
     100% { opacity: 0; transform: scale(0.5); filter: grayscale(1); }
 }
 
-.anim-attack-t1 { animation: attack-right 0.2s ease-in-out; z-index: 10; }
-.anim-attack-t2 { animation: attack-left 0.2s ease-in-out; z-index: 10; }
-.anim-hit { animation: hit-shake 0.2s ease-in-out; }
-.anim-magic-hit { animation: magic-burn 0.5s ease-out; }
-.anim-die { animation: die 0.5s forwards; }
+.anim-attack-t1 { animation: attack-right calc(0.2s / var(--battle-speed, 1)) ease-in-out; z-index: 10; }
+.anim-attack-t2 { animation: attack-left calc(0.2s / var(--battle-speed, 1)) ease-in-out; z-index: 10; }
+.anim-hit { animation: hit-shake calc(0.2s / var(--battle-speed, 1)) ease-in-out; }
+.anim-magic-hit { animation: magic-burn calc(0.5s / var(--battle-speed, 1)) ease-out; }
+.anim-die { animation: die calc(0.5s / var(--battle-speed, 1)) forwards; }
 
 @keyframes magic-burn {
     0% { filter: brightness(1) sepia(0) hue-rotate(0deg); transform: scale(1); }
@@ -325,7 +325,7 @@ button:disabled {
     text-shadow: 2px 2px 0 #000;
     pointer-events: none;
     z-index: 20;
-    animation: floatUp 1s forwards;
+    animation: floatUp calc(1s / var(--battle-speed, 1)) forwards;
 }
 
 .damage-text.crit {

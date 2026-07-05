@@ -28,6 +28,7 @@ const I18N = {
         "pref_crowd": "人多的一排",
         "pref_label": "優先: ",
         "cd_label": " | CD: {0}秒",
+        "speed_label": "戰鬥速度: ",
 
         "log_limit_reached": "玩家 {0} 已經達到人數上限 ({1}人)！",
         "log_battle_start": "⚔️ <b>戰鬥開始！</b>",
@@ -72,6 +73,7 @@ const I18N = {
         "pref_crowd": "Crowded Row",
         "pref_label": "Target: ",
         "cd_label": " | CD: {0}s",
+        "speed_label": "Speed: ",
 
         "log_limit_reached": "Player {0} reached the limit ({1})!",
         "log_battle_start": "⚔️ <b>Battle Starts!</b>",

@@ -37,6 +37,13 @@
             <h1 class="title" data-i18n="title">聖焰與暗影的交鋒</h1>
             <div class="controls">
                 <label><span data-i18n-text="max_chars_label">上場人數 (2~5): </span><input type="number" id="num-chars" value="2" min="2" max="5"></label>
+                <label><span data-i18n-text="speed_label">戰鬥速度: </span>
+                    <select id="speed-select">
+                        <option value="0.5">0.5X</option>
+                        <option value="1" selected>1X</option>
+                        <option value="2">2X</option>
+                    </select>
+                </label>
                 <button id="btn-random" data-i18n="btn_random">🎲 一鍵隨機佈陣</button>
                 <button id="btn-start" class="primary" disabled data-i18n="btn_start">⚔️ 開始戰鬥</button>
                 <button id="btn-reset" class="hidden" data-i18n="btn_reset">🔄 重置下一局</button>

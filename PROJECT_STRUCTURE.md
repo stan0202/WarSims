@@ -22,10 +22,11 @@
 ├── modular-version/        # 模組化重構版獨立目錄
 │   ├── index.html          
 │   ├── style.css           
-│   ├── app.js              # UI 互動與狀態協調者
-│   ├── audio.js            # 音效與背景音樂獨立模組
-│   ├── battle.js           # 戰鬥引擎與時間軸獨立模組
-│   └── characters.js       # 純粹的角色數值設定檔 (移除 UI 邏輯)
+│   └── js/                 # JS 模組集中目錄
+│       ├── app.js          # UI 互動與狀態協調者
+│       ├── audio.js        # 音效與背景音樂獨立模組
+│       ├── battle.js       # 戰鬥引擎與時間軸獨立模組
+│       └── characters.js   # 純粹的角色數值設定檔 (移除 UI 邏輯)
 ├── index.html              # 遊戲主頁 (穩定版)
 ├── app.js                  # 遊戲主邏輯腳本 (核心對戰引擎、UI互動)
 ├── style.css               # 核心樣式表 (UI、玻璃擬物化風格、動畫特效)

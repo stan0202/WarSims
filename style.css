@@ -304,11 +304,11 @@ button:disabled {
     100% { opacity: 0; transform: scale(0.5); filter: grayscale(1); }
 }
 
-.anim-attack-t1 { animation: attack-right calc(0.2s / var(--battle-speed, 1)) ease-in-out; z-index: 10; }
-.anim-attack-t2 { animation: attack-left calc(0.2s / var(--battle-speed, 1)) ease-in-out; z-index: 10; }
-.anim-hit { animation: hit-shake calc(0.2s / var(--battle-speed, 1)) ease-in-out; }
-.anim-magic-hit { animation: magic-burn calc(0.5s / var(--battle-speed, 1)) ease-out; }
-.anim-die { animation: die calc(0.5s / var(--battle-speed, 1)) forwards; }
+.anim-attack-t1 { animation: attack-right 0.2s ease-in-out; z-index: 10; }
+.anim-attack-t2 { animation: attack-left 0.2s ease-in-out; z-index: 10; }
+.anim-hit { animation: hit-shake 0.2s ease-in-out; }
+.anim-magic-hit { animation: magic-burn 0.5s ease-out; }
+.anim-die { animation: die 0.5s forwards; }
 
 @keyframes magic-burn {
     0% { filter: brightness(1) sepia(0) hue-rotate(0deg); transform: scale(1); }
@@ -325,7 +325,7 @@ button:disabled {
     text-shadow: 2px 2px 0 #000;
     pointer-events: none;
     z-index: 20;
-    animation: floatUp calc(1s / var(--battle-speed, 1)) forwards;
+    animation: floatUp 1s forwards;
 }
 
 .damage-text.crit {
@@ -417,12 +417,29 @@ button:disabled {
 .battle-log {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
-    border-radius: 15px;
     padding: 1.5rem;
-    height: 250px;
     display: flex;
     flex-direction: column;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(15px);
+}
+
+.battle-log.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 350px;
+    height: 100vh;
+    border-radius: 0;
+    border-left: none;
+    border-right: 1px solid var(--glass-border);
+    z-index: 50;
+    transition: transform 0.3s ease;
+    padding-top: 60px; /* 留出上方空間 */
+    background: rgba(20, 25, 35, 0.85); /* 稍微加深底色以確保可讀性 */
+}
+
+.battle-log.sidebar.hidden-sidebar {
+    transform: translateX(-100%);
 }
 
 .battle-log h3 {
@@ -475,44 +492,161 @@ button:disabled {
     font-weight: bold;
 }
 
-/* Audio Settings Panel */
-.audio-settings {
+.top-controls {
     position: absolute;
     top: 20px;
     right: 20px;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 15px;
-    padding: 1rem;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
     z-index: 100;
+    display: flex;
+    gap: 15px;
+    align-items: center;
 }
 
-.audio-settings h4 {
-    color: var(--primary-gold);
-    margin-bottom: 0.8rem;
-    font-family: 'Cinzel', serif;
+/* Modal 樣式 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content {
+    background: rgba(25, 25, 35, 0.95);
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: var(--primary-color);
     text-align: center;
-    border-bottom: 1px solid var(--glass-border);
-    padding-bottom: 0.3rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
 }
 
-.setting-row {
+.setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.setting-group label {
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.slider-row {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.85rem;
+    gap: 10px;
 }
 
-.setting-row label {
-    width: 35px;
+.slider-row input[type="range"] {
+    flex: 1;
 }
 
-.setting-row input[type="range"] {
-    width: 80px;
-    cursor: pointer;
+#btn-close-settings {
+    margin-top: 10px;
+}
+
+/* Stats Modal Specific Styles */
+.stats-modal-content {
+    width: 600px;
+}
+
+.stats-form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* Scrollbar for stats form */
+.stats-form-container::-webkit-scrollbar {
+    width: 8px;
+}
+.stats-form-container::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.2);
+    border-radius: 4px;
+}
+.stats-form-container::-webkit-scrollbar-thumb {
+    background: var(--primary-gold);
+    border-radius: 4px;
+}
+
+.stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0,0,0,0.4);
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.stat-class-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 120px;
+    font-weight: bold;
+    color: var(--primary-gold);
+}
+
+.stat-inputs {
+    display: flex;
+    gap: 15px;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.stat-input-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.stat-input-group label {
+    font-size: 0.85em;
+    color: var(--text-light);
+}
+
+.stat-input-group input[type="number"] {
+    width: 70px;
+    padding: 4px;
+    font-size: 0.9em;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 15px;
 }
 
 .icon-btn {
@@ -535,22 +669,4 @@ button:disabled {
 .icon-btn.muted {
     opacity: 0.3;
     filter: grayscale(1);
-}
-
-.top-controls {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 100;
-}
-
-.top-controls select {
-    background: rgba(0,0,0,0.6);
-    color: var(--primary-gold);
-    border: 1px solid var(--glass-border);
-    padding: 0.5rem;
-    border-radius: 5px;
-    font-family: 'Noto Serif TC', serif;
-    outline: none;
-    cursor: pointer;
 }

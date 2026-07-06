@@ -480,6 +480,9 @@ button:disabled {
     top: 20px;
     right: 20px;
     z-index: 100;
+    display: flex;
+    gap: 15px;
+    align-items: center;
 }
 
 /* Modal 樣式 */

@@ -20,6 +20,13 @@ const I18N = {
         "selection_none": "無",
         "battle_log_title": "📜 戰鬥日誌",
         
+        "settings_title": "⚙️ 遊戲設定",
+        "setting_language": "語言 (Language)",
+        "setting_speed": "戰鬥速度",
+        "setting_bgm": "音樂音量",
+        "setting_sfx": "音效音量",
+        "btn_close": "關閉",
+        
         "class_warrior": "戰士",
         "class_assassin": "刺客",
         "class_archer": "弓手",
@@ -65,6 +72,13 @@ const I18N = {
         "selection_status": "Selected: ",
         "selection_none": "None",
         "battle_log_title": "📜 Battle Log",
+        
+        "settings_title": "⚙️ Settings",
+        "setting_language": "Language (語言)",
+        "setting_speed": "Battle Speed",
+        "setting_bgm": "Music Volume",
+        "setting_sfx": "SFX Volume",
+        "btn_close": "Close",
         
         "class_warrior": "Warrior",
         "class_assassin": "Assassin",

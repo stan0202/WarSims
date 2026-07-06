@@ -5,7 +5,6 @@ renderCharacterPool('character-pool-container');
 let team1 = []; 
 let team2 = [];
 let selectedClassForPlacement = null;
-let historyRecords = JSON.parse(localStorage.getItem('jrpg_history')) || [];
 
 let bgmMuted = false;
 let sfxMuted = false;
@@ -44,11 +43,21 @@ const logContent = document.getElementById('log-content');
 const btnStart = document.getElementById('btn-start');
 const btnRandom = document.getElementById('btn-random');
 const btnReset = document.getElementById('btn-reset');
-const btnExport = document.getElementById('btn-export');
 const inputNumChars = document.getElementById('num-chars');
 const charCards = document.querySelectorAll('.char-card');
 const selectionStatus = document.getElementById('selection-status');
 const speedSelect = document.getElementById('speed-select');
+const btnSettings = document.getElementById('btn-settings');
+const modalSettings = document.getElementById('settings-modal');
+const btnCloseSettings = document.getElementById('btn-close-settings');
+
+btnSettings.addEventListener('click', () => {
+    modalSettings.classList.remove('hidden');
+});
+
+btnCloseSettings.addEventListener('click', () => {
+    modalSettings.classList.add('hidden');
+});
 
 let battleSpeed = 1.0;
 speedSelect.addEventListener('change', (e) => {
@@ -398,13 +407,6 @@ btnStart.addEventListener('click', async () => {
     // 將所有角色設為不可拖曳
     document.querySelectorAll('.character').forEach(el => el.draggable = false);
 
-    // 紀錄簡化的初始陣容
-    const record = {
-        timestamp: new Date().toISOString(),
-        team1Formation: team1.map(c => ({ nameKey: c.nameKey, x: c.x, y: c.y })),
-        team2Formation: team2.map(c => ({ nameKey: c.nameKey, x: c.x, y: c.y }))
-    };
-
     const calcDamage = (atk, def) => {
         let mult = 1.0;
         if ((atk.element === "石頭" && def.element === "剪刀") ||
@@ -570,36 +572,11 @@ btnStart.addEventListener('click', async () => {
     else if (team2.some(isAlive)) { winnerArg = "log_win"; winnerArgs = ["2"]; }
 
     logI18n('<br>{content}', winnerArg, winnerArgs);
-    record.result = t(winnerArg, ...winnerArgs);
-    
-    // 寫入簡化版的紀錄並存入 LocalStorage
-    historyRecords.push(record);
-    localStorage.setItem('jrpg_history', JSON.stringify(historyRecords));
 
     btnReset.classList.remove('hidden');
     // 移除 audio.stopBGM() 讓背景音樂保持播放
 });
 
-// 匯出簡易紀錄
-btnExport.addEventListener('click', () => {
-    if (historyRecords.length === 0) {
-        alert(t("alert_no_record"));
-        return;
-    }
-    
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(historyRecords, null, 2));
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "battle_history_simple.json");
-    document.body.appendChild(downloadAnchorNode); 
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-    
-    // 匯出後可選擇清空
-    if(confirm(t("confirm_clear_record"))) {
-        historyRecords = [];
-        localStorage.removeItem('jrpg_history');
-    }
-});
+// (移除匯出戰鬥紀錄功能)
 
 initGrids();

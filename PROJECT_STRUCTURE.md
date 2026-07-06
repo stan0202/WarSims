@@ -22,6 +22,8 @@
 │   └── characters.js       # 純粹的角色數值設定檔 (移除 UI 邏輯)
 ├── index.html              # 遊戲主頁 (穩定版)
 ├── style.css               # 核心樣式表 (UI、玻璃擬物化風格、側邊欄、動畫特效)
+├── Character_Overview.md   # 角色屬性與克制規則速查手冊 (原 Basic.md)
+├── Game_Mechanics.md       # 遊戲機制與設定白皮書
 └── PROJECT_STRUCTURE.md    # 本專案架構說明文件
 ```
 

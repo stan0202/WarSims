@@ -20,6 +20,10 @@
 │   ├── audio.js            # 音效與背景音樂獨立模組
 │   ├── battle.js           # 戰鬥引擎與時間軸獨立模組
 │   └── characters.js       # 純粹的角色數值設定檔 (移除 UI 邏輯)
+├── scripts/                # Python 模擬與測試腳本目錄
+│   ├── simulate.py         # 基礎 Python 戰鬥模擬器
+│   ├── simulate_backup.py  # 模擬器備份檔
+│   └── simulate_cd.py      # 加入冷卻時間測試的模擬器版本
 ├── index.html              # 遊戲主頁 (穩定版)
 ├── style.css               # 核心樣式表 (UI、玻璃擬物化風格、側邊欄、動畫特效)
 ├── Character_Overview.md   # 角色屬性與克制規則速查手冊 (原 Basic.md)

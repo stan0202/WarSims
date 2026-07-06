@@ -629,10 +629,12 @@ button:disabled {
 
 .stat-row {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 12px;
     background: rgba(0,0,0,0.4);
-    padding: 10px 15px;
+    padding: 15px;
     border-radius: 8px;
     border: 1px solid rgba(255,255,255,0.05);
 }
@@ -640,17 +642,21 @@ button:disabled {
 .stat-class-info {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
-    width: 120px;
+    width: 100%;
     font-weight: bold;
     color: var(--primary-gold);
+    font-size: 1.1rem;
+    border-bottom: 1px dashed rgba(255,255,255,0.1);
+    padding-bottom: 8px;
 }
 
 .stat-inputs {
     display: flex;
     gap: 15px;
-    flex: 1;
-    justify-content: flex-end;
+    width: 100%;
+    justify-content: center;
 }
 
 .stat-input-group {

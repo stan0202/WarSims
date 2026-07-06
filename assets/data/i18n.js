@@ -27,6 +27,10 @@ const I18N = {
         "setting_sfx": "音效音量",
         "btn_close": "關閉",
         
+        "stats_title": "📊 數值調整 (測試用)",
+        "btn_save_stats": "💾 保存設定",
+        "btn_cancel_stats": "取消",
+        
         "class_warrior": "戰士",
         "class_assassin": "刺客",
         "class_archer": "弓手",
@@ -79,6 +83,10 @@ const I18N = {
         "setting_bgm": "Music Volume",
         "setting_sfx": "SFX Volume",
         "btn_close": "Close",
+
+        "stats_title": "📊 Stats Adjustment (Testing)",
+        "btn_save_stats": "💾 Save Settings",
+        "btn_cancel_stats": "Cancel",
         
         "class_warrior": "Warrior",
         "class_assassin": "Assassin",

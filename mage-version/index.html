@@ -11,8 +11,9 @@
     <div id="game-container">
         <div class="bg-overlay"></div>
         
-        <!-- 右上角設定按鈕 -->
+        <!-- 右上角設定與數據按鈕 -->
         <div class="top-controls">
+            <button id="btn-stats" class="icon-btn" title="數值調整">📊</button>
             <button id="btn-settings" class="icon-btn" title="設定">⚙️</button>
         </div>
 
@@ -55,6 +56,22 @@
                 </div>
 
                 <button id="btn-close-settings" class="primary" data-i18n="btn_close">關閉</button>
+            </div>
+        </div>
+
+        <!-- 數值調整彈出視窗 (Modal) -->
+        <div id="stats-modal" class="modal hidden">
+            <div class="modal-content stats-modal-content">
+                <h2 data-i18n="stats_title">📊 數值調整 (測試用)</h2>
+                
+                <div id="stats-form-container" class="stats-form-container">
+                    <!-- 由 JavaScript 動態生成表單 -->
+                </div>
+
+                <div class="modal-buttons">
+                    <button id="btn-cancel-stats" data-i18n="btn_cancel_stats">取消</button>
+                    <button id="btn-save-stats" class="primary" data-i18n="btn_save_stats">💾 保存設定</button>
+                </div>
             </div>
         </div>
 

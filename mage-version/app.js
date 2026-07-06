@@ -51,12 +51,77 @@ const btnSettings = document.getElementById('btn-settings');
 const modalSettings = document.getElementById('settings-modal');
 const btnCloseSettings = document.getElementById('btn-close-settings');
 
+const btnStats = document.getElementById('btn-stats');
+const modalStats = document.getElementById('stats-modal');
+const btnCancelStats = document.getElementById('btn-cancel-stats');
+const btnSaveStats = document.getElementById('btn-save-stats');
+const statsFormContainer = document.getElementById('stats-form-container');
+
 btnSettings.addEventListener('click', () => {
     modalSettings.classList.remove('hidden');
 });
 
 btnCloseSettings.addEventListener('click', () => {
     modalSettings.classList.add('hidden');
+});
+
+function openStatsModal() {
+    statsFormContainer.innerHTML = '';
+    
+    for (const key in CHARACTER_TEMPLATES) {
+        const char = CHARACTER_TEMPLATES[key];
+        const translatedName = typeof t === "function" ? t(char.nameKey) : char.nameKey;
+        
+        const row = document.createElement('div');
+        row.className = 'stat-row';
+        row.innerHTML = `
+            <div class="stat-class-info">
+                <span>${char.icon}</span>
+                <span>${translatedName}</span>
+            </div>
+            <div class="stat-inputs">
+                <div class="stat-input-group">
+                    <label>HP</label>
+                    <input type="number" id="stat-hp-${key}" value="${char.hp}" min="1">
+                </div>
+                <div class="stat-input-group">
+                    <label>ATK</label>
+                    <input type="number" id="stat-atk-${key}" value="${char.atk}" min="0">
+                </div>
+                <div class="stat-input-group">
+                    <label>CD</label>
+                    <input type="number" id="stat-cd-${key}" value="${char.cd}" min="0.1" step="0.1">
+                </div>
+            </div>
+        `;
+        statsFormContainer.appendChild(row);
+    }
+    
+    modalStats.classList.remove('hidden');
+}
+
+btnStats.addEventListener('click', openStatsModal);
+
+btnCancelStats.addEventListener('click', () => {
+    modalStats.classList.add('hidden');
+});
+
+btnSaveStats.addEventListener('click', () => {
+    for (const key in CHARACTER_TEMPLATES) {
+        const hpInput = document.getElementById(`stat-hp-${key}`);
+        const atkInput = document.getElementById(`stat-atk-${key}`);
+        const cdInput = document.getElementById(`stat-cd-${key}`);
+        
+        if (hpInput) CHARACTER_TEMPLATES[key].hp = parseInt(hpInput.value) || CHARACTER_TEMPLATES[key].hp;
+        if (atkInput) CHARACTER_TEMPLATES[key].atk = parseInt(atkInput.value) || CHARACTER_TEMPLATES[key].atk;
+        if (cdInput) CHARACTER_TEMPLATES[key].cd = parseFloat(cdInput.value) || CHARACTER_TEMPLATES[key].cd;
+    }
+    
+    // 重新渲染選角區卡片
+    renderCharacterPool('character-pool-container');
+    window.bindCharCards();
+    
+    modalStats.classList.add('hidden');
 });
 
 let battleSpeed = 1.0;

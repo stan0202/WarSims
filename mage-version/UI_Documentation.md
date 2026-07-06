@@ -5,7 +5,8 @@
 ## 1. UI 結構與功能區塊
 
 ### 1.1 主遊戲畫面 (Main Interface)
-- **⚙️ 設定按鈕 (`#btn-settings`)**：位於畫面右上角，點擊後會呼叫 `settings-modal` 顯示設定視窗。
+- **📊 數值調整按鈕 (`#btn-stats`)**：位於畫面右上角，點擊後會呼叫 `stats-modal` 顯示數值調整視窗（測試用）。
+- **⚙️ 設定按鈕 (`#btn-settings`)**：位於畫面右上角，點擊後會呼叫 `settings-modal` 顯示遊戲設定視窗。
 - **角色上場設定 (`#num-chars`)**：設定雙方隊伍的上場人數上限。
 - **一鍵隨機佈陣 (`#btn-random`)**：自動隨機將角色填入棋盤。
 - **開始戰鬥 (`#btn-start`)**：雙方陣容皆有角色時啟用，點擊後觸發時間軸引擎戰鬥。
@@ -24,6 +25,15 @@
 | `#vol-sfx` | 音效音量滑桿 (`0` ~ `1`) | `volSfxSlider.addEventListener('input')` ➔ `sfxVolume` |
 | `#toggle-sfx` | 音效靜音切換按鈕 | `toggleSfxBtn.addEventListener('click')` ➔ `sfxMuted` |
 | `#btn-close-settings` | 關閉視窗按鈕 | `btnCloseSettings.addEventListener('click')` |
+
+### 1.3 數值調整視窗 (Stats Modal)
+收納測試用的角色數值修改功能。
+
+| UI 元素 ID | 功能描述 | 對應的 JavaScript 變數/事件 |
+| :--- | :--- | :--- |
+| `#stats-modal` | 整個數值調整視窗容器 | `modalStats` |
+| `#btn-save-stats` | 儲存並套用修改後的 `HP`, `ATK`, `CD` | `btnSaveStats.addEventListener('click')` |
+| `#btn-cancel-stats` | 關閉視窗但不保存 | `btnCancelStats.addEventListener('click')` |
 
 ---
 

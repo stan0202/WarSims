@@ -570,30 +570,39 @@ button:disabled {
     margin-top: 10px;
 }
 
-/* Stats Modal Drawer Style (右側滑出抽屜式) */
-#stats-modal {
-    justify-content: flex-end;
-    align-items: stretch;
-}
-
-.stats-modal-content {
-    width: 550px;
-    max-width: 90%;
+/* Stats Sidebar (右側滑出無遮罩) */
+.stats-sidebar {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 450px;
     height: 100vh;
     border-radius: 0;
-    margin: 0;
+    border-left: 1px solid var(--glass-border);
     border-top: none;
     border-bottom: none;
     border-right: none;
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    transform: translateX(100%);
+    z-index: 50;
     transition: transform 0.3s ease;
-    background: rgba(20, 25, 35, 0.98);
+    padding: 1.5rem;
+    padding-top: 60px; /* 留出上方空間給右上角按鈕 */
+    background: rgba(20, 25, 35, 0.95);
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(15px);
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
 }
 
-#stats-modal:not(.hidden) .stats-modal-content {
-    transform: translateX(0);
+.stats-sidebar.hidden-sidebar {
+    transform: translateX(100%);
+}
+
+.stats-sidebar h3 {
+    color: var(--primary-gold);
+    margin-bottom: 1rem;
+    font-family: 'Cinzel', serif;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 0.5rem;
 }
 
 .stats-form-container {

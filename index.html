@@ -60,21 +60,19 @@
             </div>
         </div>
 
-        <!-- 數值調整彈出視窗 (Modal) -->
-        <div id="stats-modal" class="modal hidden">
-            <div class="modal-content stats-modal-content">
-                <h2 data-i18n="stats_title">📊 數值調整 (測試用)</h2>
-                
-                <div id="stats-form-container" class="stats-form-container">
-                    <!-- 由 JavaScript 動態生成表單 -->
-                </div>
-
-                <div class="modal-buttons">
-                    <button id="btn-cancel-stats" data-i18n="btn_cancel_stats">取消</button>
-                    <button id="btn-save-stats" class="primary" data-i18n="btn_save_stats">💾 保存設定</button>
-                </div>
+        <!-- 數值調整視窗 (Sidebar) -->
+        <section id="stats-sidebar" class="stats-sidebar hidden-sidebar">
+            <h3 data-i18n="stats_title">📊 數值調整 (測試用)</h3>
+            
+            <div id="stats-form-container" class="stats-form-container">
+                <!-- 由 JavaScript 動態生成表單 -->
             </div>
-        </div>
+
+            <div class="modal-buttons">
+                <button id="btn-cancel-stats" data-i18n="btn_cancel_stats">取消</button>
+                <button id="btn-save-stats" class="primary" data-i18n="btn_save_stats">💾 保存設定</button>
+            </div>
+        </section>
 
         <header>
             <h1 class="title" data-i18n="title">聖焰與暗影的交鋒</h1>

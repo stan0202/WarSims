@@ -53,7 +53,7 @@ const modalSettings = document.getElementById('settings-modal');
 const btnCloseSettings = document.getElementById('btn-close-settings');
 
 const btnStats = document.getElementById('btn-stats');
-const modalStats = document.getElementById('stats-modal');
+const modalStats = document.getElementById('stats-sidebar');
 const btnCancelStats = document.getElementById('btn-cancel-stats');
 const btnSaveStats = document.getElementById('btn-save-stats');
 const statsFormContainer = document.getElementById('stats-form-container');
@@ -105,13 +105,19 @@ function openStatsModal() {
         statsFormContainer.appendChild(row);
     }
     
-    modalStats.classList.remove('hidden');
+    modalStats.classList.remove('hidden-sidebar');
 }
 
-btnStats.addEventListener('click', openStatsModal);
+btnStats.addEventListener('click', () => {
+    if (modalStats.classList.contains('hidden-sidebar')) {
+        openStatsModal();
+    } else {
+        modalStats.classList.add('hidden-sidebar');
+    }
+});
 
 btnCancelStats.addEventListener('click', () => {
-    modalStats.classList.add('hidden');
+    modalStats.classList.add('hidden-sidebar');
 });
 
 btnSaveStats.addEventListener('click', () => {
@@ -129,7 +135,7 @@ btnSaveStats.addEventListener('click', () => {
     renderCharacterPool('character-pool-container');
     window.bindCharCards();
     
-    modalStats.classList.add('hidden');
+    modalStats.classList.add('hidden-sidebar');
 });
 
 let battleSpeed = 1.0;

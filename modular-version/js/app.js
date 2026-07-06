@@ -436,9 +436,6 @@ btnStart.addEventListener('click', async () => {
     // 戰鬥開始時隱藏下方自選面板
     document.getElementById('selection-panel').classList.add('hidden');
     
-    // 自動展開戰鬥日誌
-    battleLogSidebar.classList.remove('hidden-sidebar');
-    
     await BattleEngine.runBattle(team1, team2, {
         battleSpeed: battleSpeed,
         logI18n: logI18n,

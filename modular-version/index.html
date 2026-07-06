@@ -13,6 +13,7 @@
         
         <!-- 右上角設定與數據按鈕 -->
         <div class="top-controls">
+            <button id="btn-toggle-log" class="icon-btn" title="戰鬥日誌">📜</button>
             <button id="btn-stats" class="icon-btn" title="數值調整">📊</button>
             <button id="btn-settings" class="icon-btn" title="設定">⚙️</button>
         </div>
@@ -123,7 +124,7 @@
             <div id="selection-status"><span data-i18n-text="selection_status">目前選擇：</span><span data-i18n-text="selection_none">無</span></div>
         </section>
 
-        <section class="battle-log">
+        <section id="battle-log-sidebar" class="battle-log sidebar hidden-sidebar">
             <h3 data-i18n="battle_log_title">📜 戰鬥日誌</h3>
             <div id="log-content"></div>
         </section>

@@ -417,12 +417,29 @@ button:disabled {
 .battle-log {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
-    border-radius: 15px;
     padding: 1.5rem;
-    height: 250px;
     display: flex;
     flex-direction: column;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(15px);
+}
+
+.battle-log.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 350px;
+    height: 100vh;
+    border-radius: 0;
+    border-left: none;
+    border-right: 1px solid var(--glass-border);
+    z-index: 50;
+    transition: transform 0.3s ease;
+    padding-top: 60px; /* 留出上方空間 */
+    background: rgba(20, 25, 35, 0.85); /* 稍微加深底色以確保可讀性 */
+}
+
+.battle-log.sidebar.hidden-sidebar {
+    transform: translateX(-100%);
 }
 
 .battle-log h3 {

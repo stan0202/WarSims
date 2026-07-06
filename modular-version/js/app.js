@@ -58,6 +58,13 @@ const btnCancelStats = document.getElementById('btn-cancel-stats');
 const btnSaveStats = document.getElementById('btn-save-stats');
 const statsFormContainer = document.getElementById('stats-form-container');
 
+const btnToggleLog = document.getElementById('btn-toggle-log');
+const battleLogSidebar = document.getElementById('battle-log-sidebar');
+
+btnToggleLog.addEventListener('click', () => {
+    battleLogSidebar.classList.toggle('hidden-sidebar');
+});
+
 btnSettings.addEventListener('click', () => {
     modalSettings.classList.remove('hidden');
 });
@@ -428,6 +435,9 @@ btnStart.addEventListener('click', async () => {
     
     // 戰鬥開始時隱藏下方自選面板
     document.getElementById('selection-panel').classList.add('hidden');
+    
+    // 自動展開戰鬥日誌
+    battleLogSidebar.classList.remove('hidden-sidebar');
     
     await BattleEngine.runBattle(team1, team2, {
         battleSpeed: battleSpeed,

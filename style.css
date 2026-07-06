@@ -570,16 +570,37 @@ button:disabled {
     margin-top: 10px;
 }
 
-/* Stats Modal Specific Styles */
+/* Stats Modal Drawer Style (右側滑出抽屜式) */
+#stats-modal {
+    justify-content: flex-end;
+    align-items: stretch;
+}
+
 .stats-modal-content {
-    width: 600px;
+    width: 550px;
+    max-width: 90%;
+    height: 100vh;
+    border-radius: 0;
+    margin: 0;
+    border-top: none;
+    border-bottom: none;
+    border-right: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    background: rgba(20, 25, 35, 0.98);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+}
+
+#stats-modal:not(.hidden) .stats-modal-content {
+    transform: translateX(0);
 }
 
 .stats-form-container {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    max-height: 60vh;
+    flex: 1;
     overflow-y: auto;
     padding-right: 10px;
 }
